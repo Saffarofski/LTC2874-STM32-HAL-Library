@@ -3,3 +3,5 @@ This is a translation from https://github.com/analogdevicesinc/Linduino/blob/mas
 
 
 # HOW TO USE?
+It's very easy to use this library.
+First of all define the spi channel which is connected to LTC2874 chip :
