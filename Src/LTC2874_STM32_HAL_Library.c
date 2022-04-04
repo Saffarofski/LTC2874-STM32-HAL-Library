@@ -1,17 +1,17 @@
 #include "LTC2874_STM32_HAL_Library.h"
 
 /*!
-OR'd together with the register address to form the command byte
-| LTC2874 Command String   | Value |
-| :------------------------| :---: |
-| LTC2874_READ             | 0x00  |
-| LTC2874_WRITE_NO_UPDATE  | 0x20  |
-| LTC2874_UPDATE_ALL       | 0x40  |
-| LTC2874_WRITE_UPDATE_ALL | 0x60  |
-| LTC2874_RESET            | 0xE0  |
-*/
+ OR'd together with the register address to form the command byte
+ | LTC2874 Command String   | Value |
+ | :------------------------| :---: |
+ | LTC2874_READ             | 0x00  |
+ | LTC2874_WRITE_NO_UPDATE  | 0x20  |
+ | LTC2874_UPDATE_ALL       | 0x40  |
+ | LTC2874_WRITE_UPDATE_ALL | 0x60  |
+ | LTC2874_RESET            | 0xE0  |
+ */
 /*! @name Command Codes
-@{ */
+ @{ */
 
 // Command Codes
 #define   LTC2874_READ               0x00  //! READ REGISTER
@@ -21,28 +21,27 @@ OR'd together with the register address to form the command byte
 #define   LTC2874_RESET              0xE0  //! RESET
 //! @}
 
-
 /*!
-| Register             | Address |
-| :--------------------| :-----: |
-| LTC2874_IRQREG_REG0  | 0x00    |
-| LTC2874_IRQMASK_REG1 | 0x01    |
-| LTC2874_EVENT1_REG2  | 0x02    |
-| LTC2874_EVENT2_REG3  | 0x03    |
-| LTC2874_EVENT3_REG4  | 0x04    |
-| LTC2874_EVENT4_REG5  | 0x05    |
-| LTC2874_STATUS1_REG6 | 0x06    |
-| LTC2874_STATUS2_REG7 | 0x07    |
-| LTC2874_MODE1_REG8   | 0x08    |
-| LTC2874_MODE2_REG9   | 0x09    |
-| LTC2874_NSF_REGA     | 0x0A    |
-| LTC2874_ILLM_REGB    | 0x0B    |
-| LTC2874_TMRCTRL_REGC | 0x0C    |
-| LTC2874_CTRL1_REGD   | 0x0D    |
-| LTC2874_CTRL2_REGE   | 0x0E    |
-*/
+ | Register             | Address |
+ | :--------------------| :-----: |
+ | LTC2874_IRQREG_REG0  | 0x00    |
+ | LTC2874_IRQMASK_REG1 | 0x01    |
+ | LTC2874_EVENT1_REG2  | 0x02    |
+ | LTC2874_EVENT2_REG3  | 0x03    |
+ | LTC2874_EVENT3_REG4  | 0x04    |
+ | LTC2874_EVENT4_REG5  | 0x05    |
+ | LTC2874_STATUS1_REG6 | 0x06    |
+ | LTC2874_STATUS2_REG7 | 0x07    |
+ | LTC2874_MODE1_REG8   | 0x08    |
+ | LTC2874_MODE2_REG9   | 0x09    |
+ | LTC2874_NSF_REGA     | 0x0A    |
+ | LTC2874_ILLM_REGB    | 0x0B    |
+ | LTC2874_TMRCTRL_REGC | 0x0C    |
+ | LTC2874_CTRL1_REGD   | 0x0D    |
+ | LTC2874_CTRL2_REGE   | 0x0E    |
+ */
 /*! @name Register Addresses
-@{ */
+ @{ */
 
 // Register Addresses
 #define   LTC2874_IRQREG_REG0    0x00
@@ -63,7 +62,7 @@ OR'd together with the register address to form the command byte
 //! @}
 
 /*! @name Register Bit and Mask Definitions
-@{ */
+ @{ */
 
 // register bit definitions / masks
 #define    LTC2874_OT             (0x1<<7)      // REGISTER IRQREG
@@ -225,177 +224,147 @@ OR'd together with the register address to form the command byte
 
 //! @}
 
-
-
 /* these are the functions which i added myself: */
-void LTC2874_Init(LTC2874_InitTypeDef *LTC2874_handle)
-{
+void LTC2874_Init(LTC2874_InitTypeDef *LTC2874_handle) {
 	CS_GPIO_PORT = LTC2874_handle->CS_GPIO_PORT;
-	CS_GPIO_Pin  = LTC2874_handle->CS_GPIO_Pin;
-	SPI_Handler  = LTC2874_handle->SPI_Handler;
+	CS_GPIO_Pin = LTC2874_handle->CS_GPIO_Pin;
+	SPI_Handler = LTC2874_handle->SPI_Handler;
 }
 
-void GPIO_ResetBits(GPIO_TypeDef *GPIOx , uint16_t GPIO_Pin)
-{
-    HAL_GPIO_WritePin(GPIOx , GPIO_Pin , GPIO_PIN_RESET);
+void GPIO_ResetBits(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin) {
+	HAL_GPIO_WritePin(GPIOx, GPIO_Pin, GPIO_PIN_RESET);
 }
 
-void GPIO_SetBits(GPIO_TypeDef *GPIOx , uint16_t GPIO_Pin)
-{
-    HAL_GPIO_WritePin(GPIOx , GPIO_Pin , GPIO_PIN_SET);
+void GPIO_SetBits(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin) {
+	HAL_GPIO_WritePin(GPIOx, GPIO_Pin, GPIO_PIN_SET);
 }
 
-void spi_write (uint8_t Data)
-{
+void spi_write(uint8_t Data) {
 	HAL_SPI_Transmit(SPI_Handler, &Data, 1, 10);
 }
 
-uint8_t spi_read(uint8_t Data)
-{
+uint8_t spi_read(uint8_t Data) {
 	uint8_t data_byte;
 //	HAL_SPI_Transmit(&hspi1, &Data, 1, 10);
 //	HAL_SPI_Receive(&hspi1, &data_byte, 1, 10);
-	HAL_SPI_TransmitReceive(SPI_Handler, &Data , &data_byte, 1, 10);
+	HAL_SPI_TransmitReceive(SPI_Handler, &Data, &data_byte, 1, 10);
 //	HAL_SPI_TransmitReceive(hspi, pTxData, pRxData, Size, Timeout)
 	return data_byte;
 }
 
-void SET_LTC2874_CS(void)
-{
-	 HAL_GPIO_WritePin(CS_GPIO_PORT , CS_GPIO_Pin , GPIO_PIN_SET);
+void SET_LTC2874_CS(void) {
+	HAL_GPIO_WritePin(CS_GPIO_PORT, CS_GPIO_Pin, GPIO_PIN_SET);
 }
 
-void RESET_LTC2874_CS(void)
-{
-	 HAL_GPIO_WritePin(CS_GPIO_PORT , CS_GPIO_Pin , GPIO_PIN_RESET);
+void RESET_LTC2874_CS(void) {
+	HAL_GPIO_WritePin(CS_GPIO_PORT, CS_GPIO_Pin, GPIO_PIN_RESET);
 }
 
+void LTC2874_cq_output(uint8_t port, uint8_t value) {
+	uint8_t data_byte, command_byte;
 
-void LTC2874_cq_output(uint8_t port, uint8_t value)
-{
-  uint8_t data_byte, command_byte;
+	command_byte = LTC2874_READ | (LTC2874_CTRL1_REGD << 1);
 
-  command_byte = LTC2874_READ | (LTC2874_CTRL1_REGD << 1);
+	HAL_GPIO_WritePin(CS_GPIO_PORT, CS_GPIO_Pin, GPIO_PIN_RESET); //! 1) Pull CS low
+	HAL_SPI_Transmit(SPI_Handler, &command_byte, 1, 10); //! 2) Write first byte and send command | address
+	HAL_SPI_TransmitReceive(SPI_Handler, 0X00, &data_byte, 1, 10); //! 3) Read last byte (while sending null data)
+	HAL_GPIO_WritePin(CS_GPIO_PORT, CS_GPIO_Pin, GPIO_PIN_SET);
 
-  HAL_GPIO_WritePin(CS_GPIO_PORT , CS_GPIO_Pin , GPIO_PIN_RESET);     //! 1) Pull CS low
-  HAL_SPI_Transmit(SPI_Handler, &command_byte, 1, 10);                                //! 2) Write first byte and send command | address
-  HAL_SPI_TransmitReceive(SPI_Handler, 0X00, &data_byte, 1, 10);                      //! 3) Read last byte (while sending null data)
-  HAL_GPIO_WritePin(CS_GPIO_PORT , CS_GPIO_Pin , GPIO_PIN_SET);
+	if (port == 5) {
+		port = 0xF;
+	} else {
+		port = 0x01 << (port - 1);      // make mask
+	}
 
-  if (port == 5)
-  {
-    port = 0xF;
-  }
-  else
-  {
-    port = 0x01 << (port - 1);      // make mask
-  }
+	if (value) {
+		data_byte |= port;                // bitwise OR
+	} else {
+		data_byte &= ~port;
+	}
 
-  if (value)
-  {
-    data_byte |= port;                // bitwise OR
-  }
-  else
-  {
-    data_byte &= ~port;
-  }
+	command_byte = LTC2874_WRITE_UPDATE_ALL | (LTC2874_CTRL1_REGD << 1);
 
-  command_byte = LTC2874_WRITE_UPDATE_ALL | (LTC2874_CTRL1_REGD << 1);
-
-  HAL_GPIO_WritePin(CS_GPIO_PORT , CS_GPIO_Pin , GPIO_PIN_RESET);    //! 1) Pull CS low to start transaction
-  spi_write(command_byte);                                                      //! 2) Write the command and address
-  spi_write(data_byte);                                                         //! 3) Write the data
-  HAL_GPIO_WritePin(CS_GPIO_PORT , CS_GPIO_Pin , GPIO_PIN_SET);      //! 4) Pull CS high to finish transaction
+	HAL_GPIO_WritePin(CS_GPIO_PORT, CS_GPIO_Pin, GPIO_PIN_RESET); //! 1) Pull CS low to start transaction
+	spi_write(command_byte);                //! 2) Write the command and address
+	spi_write(data_byte);                                  //! 3) Write the data
+	HAL_GPIO_WritePin(CS_GPIO_PORT, CS_GPIO_Pin, GPIO_PIN_SET); //! 4) Pull CS high to finish transaction
 }
-
-
 
 //************************************************************************************
 //  Enables or Disables L+ output for specified port, then Updates.
 //  parameters: port (1-4, or 5=ALL), value (0=Disable, 1=Enable)
 //  returns: nothing
 //************************************************************************************
-void LTC2874_lplus_output(uint8_t port, uint8_t value)
-{
-  uint8_t data_byte, command_byte;
+void LTC2874_lplus_output(uint8_t port, uint8_t value) {
+	uint8_t data_byte, command_byte;
 
-  command_byte = LTC2874_READ | (LTC2874_CTRL2_REGE << 1);
+	command_byte = LTC2874_READ | (LTC2874_CTRL2_REGE << 1);
 
-  RESET_LTC2874_CS();                //! 1) Pull CS low
-  spi_write(command_byte);           //! 2) Write first byte and send command | address
-  data_byte = spi_read(0x00);        //! 3) Read last byte (while sending null data)
-  SET_LTC2874_CS();
+	RESET_LTC2874_CS();                //! 1) Pull CS low
+	spi_write(command_byte);  //! 2) Write first byte and send command | address
+	data_byte = spi_read(0x00);  //! 3) Read last byte (while sending null data)
+	SET_LTC2874_CS();
 
-  if (port == 5)
-  {
-    port = 0xF0;
-  }
-  else
-  {
-    port = 0x01 << (port + 3);         //make mask
-  }
+	if (port == 5) {
+		port = 0xF0;
+	} else {
+		port = 0x01 << (port + 3);         //make mask
+	}
 
-  if (value)
-  {
-    data_byte |= port;                   //bitwise OR
-  }
-  else
-  {
-    data_byte &= ~port;
-  }
+	if (value) {
+		data_byte |= port;                   //bitwise OR
+	} else {
+		data_byte &= ~port;
+	}
 
-  command_byte = LTC2874_WRITE_UPDATE_ALL | (LTC2874_CTRL2_REGE << 1);
+	command_byte = LTC2874_WRITE_UPDATE_ALL | (LTC2874_CTRL2_REGE << 1);
 
-  RESET_LTC2874_CS();                //! 1) Pull CS low to start transaction
-  spi_write(command_byte);               //! 2) Write the command and address
-  spi_write(data_byte);                  //! 3) Write the data
-  SET_LTC2874_CS();               //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();                //! 1) Pull CS low to start transaction
+	spi_write(command_byte);               //! 2) Write the command and address
+	spi_write(data_byte);                  //! 3) Write the data
+	SET_LTC2874_CS();               //! 4) Pull CS high to finish transaction
 }
-
-
 
 //************************************************************************************
 //  Sets SIO_MODE bit (and also Clears SLEW bit) for specified port, then Updates.
 //  parameter: port (1-4, or 5=ALL)
 //  returns: nothing
 //************************************************************************************
-void LTC2874_sio_mode(uint8_t port)
-{
-  uint8_t data_byte_9, data_byte_E, command_byte_9, command_byte_E, position_9, position_E;
+void LTC2874_sio_mode(uint8_t port) {
+	uint8_t data_byte_9, data_byte_E, command_byte_9, command_byte_E,
+			position_9, position_E;
 
-  if (port == 5)                       // If 5 set to 0x0F
-  {
-    position_E = 0x0f;
-  }
-  else
-  {
-    position_E = (0x01 << (port - 1));  // convert port number to position
-  }
+	if (port == 5)                       // If 5 set to 0x0F
+			{
+		position_E = 0x0f;
+	} else {
+		position_E = (0x01 << (port - 1));  // convert port number to position
+	}
 
-  position_9 = position_E << 4;          // move position for slew bits
+	position_9 = position_E << 4;          // move position for slew bits
 
-  command_byte_9 = LTC2874_READ | (LTC2874_MODE2_REG9 << 1);
-  command_byte_E = LTC2874_READ | (LTC2874_CTRL2_REGE << 1);
+	command_byte_9 = LTC2874_READ | (LTC2874_MODE2_REG9 << 1);
+	command_byte_E = LTC2874_READ | (LTC2874_CTRL2_REGE << 1);
 
-  RESET_LTC2874_CS();                //! 1) Pull CS low
-  spi_write(command_byte_9);             //! 2) Write first byte and send command1 | address
-  data_byte_9 = spi_read(0x00);          //! 3) Read last byte (while sending null data)
-  spi_write(command_byte_E);             //! 4) Write first byte and send command2 | address
-  data_byte_E = spi_read(0x00);          //! 5) Read last byte (while sending null data)
-  SET_LTC2874_CS();               //! 6) Pull CS high to finish transaction
+	RESET_LTC2874_CS();                //! 1) Pull CS low
+	spi_write(command_byte_9); //! 2) Write first byte and send command1 | address
+	data_byte_9 = spi_read(0x00); //! 3) Read last byte (while sending null data)
+	spi_write(command_byte_E); //! 4) Write first byte and send command2 | address
+	data_byte_E = spi_read(0x00); //! 5) Read last byte (while sending null data)
+	SET_LTC2874_CS();               //! 6) Pull CS high to finish transaction
 
-  data_byte_9 &= ~position_9;            // SLEW=0
-  data_byte_E |= position_E;             // SIO_MODE=1
+	data_byte_9 &= ~position_9;            // SLEW=0
+	data_byte_E |= position_E;             // SIO_MODE=1
 
-  command_byte_9 = LTC2874_WRITE_NO_UPDATE | (LTC2874_MODE2_REG9 << 1);
-  command_byte_E = LTC2874_WRITE_UPDATE_ALL | (LTC2874_CTRL2_REGE << 1);
+	command_byte_9 = LTC2874_WRITE_NO_UPDATE | (LTC2874_MODE2_REG9 << 1);
+	command_byte_E = LTC2874_WRITE_UPDATE_ALL | (LTC2874_CTRL2_REGE << 1);
 
-  RESET_LTC2874_CS();                //! 1) Pull CS low to start transaction
-  spi_write(command_byte_9);             //! 2) Write the command and address
-  spi_write(data_byte_9);                //! 3) Write the data
-  spi_write(command_byte_E);             //! 4) Write the command and address
-  spi_write(data_byte_E);                //! 5) Write the data
-  SET_LTC2874_CS();               //! 6) Pull CS high to finish transaction
+	RESET_LTC2874_CS();                //! 1) Pull CS low to start transaction
+	spi_write(command_byte_9);             //! 2) Write the command and address
+	spi_write(data_byte_9);                //! 3) Write the data
+	spi_write(command_byte_E);             //! 4) Write the command and address
+	spi_write(data_byte_E);                //! 5) Write the data
+	SET_LTC2874_CS();               //! 6) Pull CS high to finish transaction
 }
 
 //************************************************************************************
@@ -403,33 +372,28 @@ void LTC2874_sio_mode(uint8_t port)
 //  parameter: value (0=Disable, 1=Enable)
 //  returns: nothing
 //************************************************************************************
-void LTC2874_24v_mode(uint8_t value)
-{
-  uint8_t command_byte, data_byte;
-  command_byte = LTC2874_READ | (LTC2874_MODE1_REG8 << 1);
+void LTC2874_24v_mode(uint8_t value) {
+	uint8_t command_byte, data_byte;
+	command_byte = LTC2874_READ | (LTC2874_MODE1_REG8 << 1);
 
-  RESET_LTC2874_CS();                //! 1) Pull CS low
-  spi_write(command_byte);               //! 2) Write first byte and send command | address
-  data_byte = spi_read(0x00);            //! 3) Read last byte (while sending null data)
-  SET_LTC2874_CS();               //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();                //! 1) Pull CS low
+	spi_write(command_byte);  //! 2) Write first byte and send command | address
+	data_byte = spi_read(0x00);  //! 3) Read last byte (while sending null data)
+	SET_LTC2874_CS();               //! 4) Pull CS high to finish transaction
 
-  if (value)
-  {
-    data_byte |= LTC2874_24VMODE;        // set bit
-  }
-  else
-  {
-    data_byte &= ~LTC2874_24VMODE;     // clr bit
-  }
+	if (value) {
+		data_byte |= LTC2874_24VMODE;        // set bit
+	} else {
+		data_byte &= ~LTC2874_24VMODE;     // clr bit
+	}
 
-  command_byte = LTC2874_WRITE_UPDATE_ALL | (LTC2874_MODE1_REG8 << 1);
+	command_byte = LTC2874_WRITE_UPDATE_ALL | (LTC2874_MODE1_REG8 << 1);
 
-  RESET_LTC2874_CS();                //! 1) Pull CS low to start transaction
-  spi_write(command_byte);               //! 2) Write the command and address
-  spi_write(data_byte);                  //! 3) Write the data
-  SET_LTC2874_CS();               //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();                //! 1) Pull CS low to start transaction
+	spi_write(command_byte);               //! 2) Write the command and address
+	spi_write(data_byte);                  //! 3) Write the data
+	SET_LTC2874_CS();               //! 4) Pull CS high to finish transaction
 }
-
 
 //************************************************************************************
 //  Changes NSF (Noise Suppression Filter) setting for specified port.
@@ -438,28 +402,26 @@ void LTC2874_24v_mode(uint8_t value)
 //    value: 0x0=disabled, 0x1=20.3us, 0x2=2.8us, 0x3=0.6us (default)
 //  Higher bits are ignored. No update. Returns: nothing.
 //************************************************************************************
-void LTC2874_write_NSF_value(uint8_t port, uint8_t value)
-{
-  uint8_t command_byte , data_byte, position;
-  command_byte = LTC2874_READ | (LTC2874_NSF_REGA << 1);    // Create command and address byte
+void LTC2874_write_NSF_value(uint8_t port, uint8_t value) {
+	uint8_t command_byte, data_byte, position;
+	command_byte = LTC2874_READ | (LTC2874_NSF_REGA << 1); // Create command and address byte
 
-  RESET_LTC2874_CS();               //! 1) Pull CS low
-  spi_write(command_byte);              //! 2) Write first byte and send command | address
-  data_byte = spi_read(0x00);           //! 3) Read last byte (while sending null data)
-  SET_LTC2874_CS();              //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();               //! 1) Pull CS low
+	spi_write(command_byte);  //! 2) Write first byte and send command | address
+	data_byte = spi_read(0x00);  //! 3) Read last byte (while sending null data)
+	SET_LTC2874_CS();              //! 4) Pull CS high to finish transaction
 
-  position = ((port - 1) << 1);         // convert port number to position,Equivalent to multiply by 2
-  data_byte &= ~(0x3<<position);        // clear NSF bits with inverse mask
-  data_byte |= ((value) << position);   // bitwise OR value into NSF port position
+	position = ((port - 1) << 1); // convert port number to position,Equivalent to multiply by 2
+	data_byte &= ~(0x3 << position);        // clear NSF bits with inverse mask
+	data_byte |= ((value) << position); // bitwise OR value into NSF port position
 
-  command_byte = LTC2874_WRITE_NO_UPDATE | (LTC2874_NSF_REGA << 1);
+	command_byte = LTC2874_WRITE_NO_UPDATE | (LTC2874_NSF_REGA << 1);
 
-  RESET_LTC2874_CS();               //! 1) Pull CS low to start transaction
-  spi_write(command_byte);              //! 2) Write the command and address
-  spi_write(data_byte);                 //! 3) Write the data
-  SET_LTC2874_CS();              //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();               //! 1) Pull CS low to start transaction
+	spi_write(command_byte);              //! 2) Write the command and address
+	spi_write(data_byte);                 //! 3) Write the data
+	SET_LTC2874_CS();              //! 4) Pull CS high to finish transaction
 }
-
 
 //************************************************************************************
 //  Changes ILLM (Sinking current) setting for specified port.
@@ -468,36 +430,32 @@ void LTC2874_write_NSF_value(uint8_t port, uint8_t value)
 //    value: 0x0=500kohm, 0x1=2.5mA, 0x2=3.7mA, 0x3=6.2mA (default)
 //  Higher bits are ignored. No update. Returns: nothing.
 //************************************************************************************
-void LTC2874_write_ILLM_value(uint8_t port, uint8_t value)
-{
-  uint8_t command_byte , data_byte, position;
-  // Create command and address byte
-  command_byte = LTC2874_READ | (LTC2874_ILLM_REGB << 1);
+void LTC2874_write_ILLM_value(uint8_t port, uint8_t value) {
+	uint8_t command_byte, data_byte, position;
+	// Create command and address byte
+	command_byte = LTC2874_READ | (LTC2874_ILLM_REGB << 1);
 
-  RESET_LTC2874_CS();                    //! 1) Pull CS low
-  spi_write(command_byte);                   //! 2) Write first byte and send command | address
-  data_byte = spi_read(0x00);                //! 3) Read last byte (while sending null data)
-  SET_LTC2874_CS();                   //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();                    //! 1) Pull CS low
+	spi_write(command_byte);  //! 2) Write first byte and send command | address
+	data_byte = spi_read(0x00);  //! 3) Read last byte (while sending null data)
+	SET_LTC2874_CS();                  //! 4) Pull CS high to finish transaction
 
-  if (port == 5)                           // If 5 load each port same value
-  {
-    data_byte = value + (value << 2) + (value << 4) + (value << 6);
-  }
-  else
-  {
-    position = ((port - 1) << 1);          // convert port number to position
-    data_byte &= ~(0x3<<position);         // clear ILLM bits with inverse mask
-    data_byte |= ((value) << position);    // bitwise OR value into ILLM port position
-  }
+	if (port == 5)                           // If 5 load each port same value
+			{
+		data_byte = value + (value << 2) + (value << 4) + (value << 6);
+	} else {
+		position = ((port - 1) << 1);         // convert port number to position
+		data_byte &= ~(0x3 << position);    // clear ILLM bits with inverse mask
+		data_byte |= ((value) << position); // bitwise OR value into ILLM port position
+	}
 
-  command_byte = LTC2874_WRITE_NO_UPDATE | (LTC2874_ILLM_REGB << 1);
+	command_byte = LTC2874_WRITE_NO_UPDATE | (LTC2874_ILLM_REGB << 1);
 
-  RESET_LTC2874_CS();                    //! 1) Pull CS low to start transaction
-  spi_write(command_byte);                   //! 2) Write the command and address
-  spi_write(data_byte);                      //! 3) Write the data
-  SET_LTC2874_CS();                   //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();                  //! 1) Pull CS low to start transaction
+	spi_write(command_byte);                //! 2) Write the command and address
+	spi_write(data_byte);                      //! 3) Write the data
+	SET_LTC2874_CS();                  //! 4) Pull CS high to finish transaction
 }
-
 
 //************************************************************************************
 //  Change L+ Overcurrent Timer Control (LPTC) setting.
@@ -506,172 +464,160 @@ void LTC2874_write_ILLM_value(uint8_t port, uint8_t value)
 //    0x8=3.9ms, 0x9=7.8ms, 0xA=16ms, 0xB=30ms, 0xC=0.60ms, 0xD=0.13s, 0xE/0xF=0.25s
 //  Higher bits are ignored. No update. Returns: nothing.
 //************************************************************************************
-void LTC2874_write_LPTC_value(uint8_t value)
-{
-  uint8_t command_byte , data_byte;
-  // Create command and address byte
-  command_byte = LTC2874_READ | (LTC2874_TMRCTRL_REGC << 1);
+void LTC2874_write_LPTC_value(uint8_t value) {
+	uint8_t command_byte, data_byte;
+	// Create command and address byte
+	command_byte = LTC2874_READ | (LTC2874_TMRCTRL_REGC << 1);
 
-  RESET_LTC2874_CS();                  //! 1) Pull CS low
-  spi_write(command_byte);                 //! 2) Write first byte and send command | address
-  data_byte = spi_read(0x00);              //! 3) Read last byte (while sending null data)
-  SET_LTC2874_CS();                 //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();                  //! 1) Pull CS low
+	spi_write(command_byte);  //! 2) Write first byte and send command | address
+	data_byte = spi_read(0x00);  //! 3) Read last byte (while sending null data)
+	SET_LTC2874_CS();                 //! 4) Pull CS high to finish transaction
 
-  data_byte &= ~(LTC2874_LPTC_msk);        // clear LPTC bits with inverse mask
-  data_byte |= (LTC2874_LPTC(value));      // bitwise OR value into LPTC bits
+	data_byte &= ~(LTC2874_LPTC_msk);       // clear LPTC bits with inverse mask
+	data_byte |= (LTC2874_LPTC(value));      // bitwise OR value into LPTC bits
 
-  command_byte = LTC2874_WRITE_NO_UPDATE | (LTC2874_TMRCTRL_REGC << 1);
+	command_byte = LTC2874_WRITE_NO_UPDATE | (LTC2874_TMRCTRL_REGC << 1);
 
-  RESET_LTC2874_CS();                  //! 1) Pull CS low to start transaction
-  spi_write(command_byte);                 //! 2) Write the command and address
-  spi_write(data_byte);                    //! 3) Write the data
-  SET_LTC2874_CS();                 //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();                  //! 1) Pull CS low to start transaction
+	spi_write(command_byte);                //! 2) Write the command and address
+	spi_write(data_byte);                    //! 3) Write the data
+	SET_LTC2874_CS();                 //! 4) Pull CS high to finish transaction
 }
-
 
 //************************************************************************************
 //  Changes Auto-Retry Timer Control (RETRYTC) setting.
 //  parameter: value (0x0=0.12s, 0x1=0.24s, 0x2=0.49s, 0x3=0.98s, 0x4=2.0s, 0x5=3.9s, 0x6=7.9s, 0x7=15.7s)
 //  Higher bits are ignored. No update. Returns: nothing.
 //************************************************************************************
-void LTC2874_write_RETRYTC_value(uint8_t value)
-{
-  uint8_t command_byte , data_byte;
-  // Create command and address byte
-  command_byte = LTC2874_READ | (LTC2874_TMRCTRL_REGC << 1);
+void LTC2874_write_RETRYTC_value(uint8_t value) {
+	uint8_t command_byte, data_byte;
+	// Create command and address byte
+	command_byte = LTC2874_READ | (LTC2874_TMRCTRL_REGC << 1);
 
-  RESET_LTC2874_CS();                   //! 1) Pull CS low
-  spi_write(command_byte);                  //! 2) Write first byte and send command | address
-  data_byte = spi_read(0x00);               //! 3) Read last byte (while sending null data)
-  SET_LTC2874_CS();                  //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();                   //! 1) Pull CS low
+	spi_write(command_byte);  //! 2) Write first byte and send command | address
+	data_byte = spi_read(0x00);  //! 3) Read last byte (while sending null data)
+	SET_LTC2874_CS();                  //! 4) Pull CS high to finish transaction
 
-  data_byte &= ~(LTC2874_RETRYTC_msk);      // clear RETRYTC bits with inverse mask
-  data_byte |= (LTC2874_RETRYTC(value));    // bitwise OR value into RETRYTC bits
+	data_byte &= ~(LTC2874_RETRYTC_msk); // clear RETRYTC bits with inverse mask
+	data_byte |= (LTC2874_RETRYTC(value)); // bitwise OR value into RETRYTC bits
 
-  command_byte = LTC2874_WRITE_NO_UPDATE | (LTC2874_TMRCTRL_REGC << 1);
+	command_byte = LTC2874_WRITE_NO_UPDATE | (LTC2874_TMRCTRL_REGC << 1);
 
-  RESET_LTC2874_CS();                   //! 1) Pull CS low to start transaction
-  spi_write(command_byte);                  //! 2) Write the command and address
-  spi_write(data_byte);                     //! 3) Write the data
-  SET_LTC2874_CS();                  //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();                  //! 1) Pull CS low to start transaction
+	spi_write(command_byte);                //! 2) Write the command and address
+	spi_write(data_byte);                     //! 3) Write the data
+	SET_LTC2874_CS();                  //! 4) Pull CS high to finish transaction
 }
-
 
 //************************************************************************************
 //  Changes 2X Current Pulse Timer Control (2XPTC) setting.
 //  parameter: value (0x0=60ms (default), 0x1=disabled, 0x2=30ms, 0x3=120ms)
 //  Higher bits are ignored. No update. Returns: nothing.
 //************************************************************************************
-void LTC2874_write_2XPTC_value(uint8_t value)
-{
-  uint8_t command_byte , data_byte;
-  // Create command and address byte
-  command_byte = LTC2874_READ | (LTC2874_MODE1_REG8 << 1);
+void LTC2874_write_2XPTC_value(uint8_t value) {
+	uint8_t command_byte, data_byte;
+	// Create command and address byte
+	command_byte = LTC2874_READ | (LTC2874_MODE1_REG8 << 1);
 
-  RESET_LTC2874_CS();                   //! 1) Pull CS low
-  spi_write(command_byte);                  //! 2) Write first byte and send command | address
-  data_byte = spi_read(0x00);               //! 3) Read last byte (while sending null data)
-  SET_LTC2874_CS();                  //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();                   //! 1) Pull CS low
+	spi_write(command_byte);  //! 2) Write first byte and send command | address
+	data_byte = spi_read(0x00);  //! 3) Read last byte (while sending null data)
+	SET_LTC2874_CS();                  //! 4) Pull CS high to finish transaction
 
-  data_byte &= ~(LTC2874_2XPTC_msk);        // clear 2XPTC bits with inverse mask
-  data_byte |= (LTC2874_2XPTC(value));      // bitwise OR value into 2XPTC bits
+	data_byte &= ~(LTC2874_2XPTC_msk);     // clear 2XPTC bits with inverse mask
+	data_byte |= (LTC2874_2XPTC(value));     // bitwise OR value into 2XPTC bits
 
-  command_byte = LTC2874_WRITE_NO_UPDATE | (LTC2874_MODE1_REG8 << 1);
+	command_byte = LTC2874_WRITE_NO_UPDATE | (LTC2874_MODE1_REG8 << 1);
 
-  RESET_LTC2874_CS();                   //! 1) Pull CS low to start transaction
-  spi_write(command_byte);                  //! 2) Write the command and address
-  spi_write(data_byte);                     //! 3) Write the data
-  SET_LTC2874_CS();                  //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();                  //! 1) Pull CS low to start transaction
+	spi_write(command_byte);                //! 2) Write the command and address
+	spi_write(data_byte);                     //! 3) Write the data
+	SET_LTC2874_CS();                  //! 4) Pull CS high to finish transaction
 }
-
 
 //************************************************************************************
 //  Changes VDD Overvoltage Threshold (OV_TH) setting.
 //  parameter: value (0x0=18V, 0x1=32V (default), 0x2=34V, 0x3=36V)
 //  Higher bits are ignored. No update. Returns: nothing.
 //************************************************************************************
-void LTC2874_write_OV_TH_value(uint8_t value)
-{
-  uint8_t command_byte , data_byte;
-  // Create command and address byte
-  command_byte = LTC2874_READ | (LTC2874_MODE2_REG9 << 1);
+void LTC2874_write_OV_TH_value(uint8_t value) {
+	uint8_t command_byte, data_byte;
+	// Create command and address byte
+	command_byte = LTC2874_READ | (LTC2874_MODE2_REG9 << 1);
 
-  RESET_LTC2874_CS();                 //! 1) Pull CS low
-  spi_write(command_byte);                //! 2) Write first byte and send command | address
-  data_byte = spi_read(0x00);             //! 3) Read last byte (while sending null data)
-  SET_LTC2874_CS();                //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();                 //! 1) Pull CS low
+	spi_write(command_byte);  //! 2) Write first byte and send command | address
+	data_byte = spi_read(0x00);  //! 3) Read last byte (while sending null data)
+	SET_LTC2874_CS();                //! 4) Pull CS high to finish transaction
 
-  data_byte &= ~(LTC2874_OV_TH_msk);      // clear OV_TH bits with inverse mask
-  data_byte |= (LTC2874_OV_TH(value));    // bitwise OR value into OV_TH bits
+	data_byte &= ~(LTC2874_OV_TH_msk);     // clear OV_TH bits with inverse mask
+	data_byte |= (LTC2874_OV_TH(value));    // bitwise OR value into OV_TH bits
 
-  command_byte = LTC2874_WRITE_NO_UPDATE | (LTC2874_MODE2_REG9 << 1);
+	command_byte = LTC2874_WRITE_NO_UPDATE | (LTC2874_MODE2_REG9 << 1);
 
-  RESET_LTC2874_CS();                 //! 1) Pull CS low to start transaction
-  spi_write(command_byte);                //! 2) Write the command and address
-  spi_write(data_byte);                   //! 3) Write the data
-  SET_LTC2874_CS();                //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();                 //! 1) Pull CS low to start transaction
+	spi_write(command_byte);                //! 2) Write the command and address
+	spi_write(data_byte);                   //! 3) Write the data
+	SET_LTC2874_CS();                //! 4) Pull CS high to finish transaction
 }
-
 
 //************************************************************************************
 // Sends WURQ (Wake-up Request) on specified port.
 // parameter: port# [1,2,3, or 4; only one at a time]
 // returns: nothing.
 //************************************************************************************
-void LTC2874_wakeup_request(uint8_t port)
-{
-  uint8_t data_byte, command_byte;
-  port = 0x01 << (port + 3);         //move to MS of byte, make mask
+void LTC2874_wakeup_request(uint8_t port) {
+	uint8_t data_byte, command_byte;
+	port = 0x01 << (port + 3);         //move to MS of byte, make mask
 
-  command_byte = LTC2874_READ | (LTC2874_CTRL1_REGD << 1);
+	command_byte = LTC2874_READ | (LTC2874_CTRL1_REGD << 1);
 
-  RESET_LTC2874_CS();            //! 1) Pull CS low
-  spi_write(command_byte);           //! 2) Write first byte and send command | address
-  data_byte = spi_read(0x00);        //! 3) Read last byte (while sending null data)
-  SET_LTC2874_CS();
+	RESET_LTC2874_CS();            //! 1) Pull CS low
+	spi_write(command_byte);  //! 2) Write first byte and send command | address
+	data_byte = spi_read(0x00);  //! 3) Read last byte (while sending null data)
+	SET_LTC2874_CS();
 
-  data_byte |= port;                 // bitwise OR
+	data_byte |= port;                 // bitwise OR
 
-  command_byte = LTC2874_WRITE_UPDATE_ALL | (LTC2874_CTRL1_REGD << 1);
+	command_byte = LTC2874_WRITE_UPDATE_ALL | (LTC2874_CTRL1_REGD << 1);
 
-  RESET_LTC2874_CS();              //! 1) Pull CS low to start transaction
-  spi_write(command_byte);             //! 2) Write the command and address
-  spi_write(data_byte);                //! 3) Write the data
-  SET_LTC2874_CS();             //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();              //! 1) Pull CS low to start transaction
+	spi_write(command_byte);             //! 2) Write the command and address
+	spi_write(data_byte);                //! 3) Write the data
+	SET_LTC2874_CS();             //! 4) Pull CS high to finish transaction
 }
-
 
 //************************************************************************************
 //  Updates all registers.
 //  parameters: none
 //  returns: nothing
 //************************************************************************************
-void LTC2874_update_all(void)
-{
-  uint8_t command_byte;
-  command_byte = LTC2874_UPDATE_ALL;
+void LTC2874_update_all(void) {
+	uint8_t command_byte;
+	command_byte = LTC2874_UPDATE_ALL;
 
-  RESET_LTC2874_CS();                 //! 1) Pull CS low to start transaction
-  spi_write(command_byte);                //! 2) Write the command and address
-  spi_write(0x00);                        //! 3) Write null data
-  SET_LTC2874_CS();                //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();                 //! 1) Pull CS low to start transaction
+	spi_write(command_byte);                //! 2) Write the command and address
+	spi_write(0x00);                        //! 3) Write null data
+	SET_LTC2874_CS();                //! 4) Pull CS high to finish transaction
 }
-
 
 //************************************************************************************
 //  Writes byte of data to a register, then Updates.
 //  parameters: register, data
 //  returns: nothing
 //************************************************************************************
-void LTC2874_write_register_update_all(uint8_t LTC2874_register, uint8_t LTC2874_data)
-{
-  uint8_t command_byte;
-  command_byte = LTC2874_WRITE_UPDATE_ALL | (LTC2874_register << 1);
+void LTC2874_write_register_update_all(uint8_t LTC2874_register,
+		uint8_t LTC2874_data) {
+	uint8_t command_byte;
+	command_byte = LTC2874_WRITE_UPDATE_ALL | (LTC2874_register << 1);
 
-  RESET_LTC2874_CS();                 //! 1) Pull CS low to start transaction
-  spi_write(command_byte);                //! 2) Write the command and address
-  spi_write(LTC2874_data);                //! 3) Write the data
-  SET_LTC2874_CS();                //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();                 //! 1) Pull CS low to start transaction
+	spi_write(command_byte);                //! 2) Write the command and address
+	spi_write(LTC2874_data);                //! 3) Write the data
+	SET_LTC2874_CS();                //! 4) Pull CS high to finish transaction
 }
 
 //************************************************************************************
@@ -682,31 +628,28 @@ void LTC2874_write_register_update_all(uint8_t LTC2874_register, uint8_t LTC2874
 //    value: 0 or 1
 //  returns: nothing
 //************************************************************************************
-void LTC2874_write_bit_value_update_all(uint8_t LTC2874_register, uint8_t LTC2874_bit, uint8_t value)
-{
-  uint8_t command_byte , data_byte;
-  command_byte = LTC2874_READ | (LTC2874_register << 1);
+void LTC2874_write_bit_value_update_all(uint8_t LTC2874_register,
+		uint8_t LTC2874_bit, uint8_t value) {
+	uint8_t command_byte, data_byte;
+	command_byte = LTC2874_READ | (LTC2874_register << 1);
 
-  RESET_LTC2874_CS();                 //! 1) Pull CS low
-  spi_write(command_byte);                //! 2) Write first byte and send command | address
-  data_byte = spi_read(0x00);             //! 3) Read last byte (while sending null data)
-  SET_LTC2874_CS();                //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();                 //! 1) Pull CS low
+	spi_write(command_byte);  //! 2) Write first byte and send command | address
+	data_byte = spi_read(0x00);  //! 3) Read last byte (while sending null data)
+	SET_LTC2874_CS();                //! 4) Pull CS high to finish transaction
 
-  if (value)
-  {
-    data_byte |= LTC2874_bit;            //bitwise or
-  }
-  else
-  {
-    data_byte &= ~LTC2874_bit;
-  }
+	if (value) {
+		data_byte |= LTC2874_bit;            //bitwise or
+	} else {
+		data_byte &= ~LTC2874_bit;
+	}
 
-  command_byte = LTC2874_WRITE_UPDATE_ALL | (LTC2874_register << 1);
+	command_byte = LTC2874_WRITE_UPDATE_ALL | (LTC2874_register << 1);
 
-  RESET_LTC2874_CS();                 //! 1) Pull CS low to start transaction
-  spi_write(command_byte);                //! 2) Write the command and address
-  spi_write(data_byte);                   //! 3) Write the data
-  SET_LTC2874_CS();                //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();                 //! 1) Pull CS low to start transaction
+	spi_write(command_byte);                //! 2) Write the command and address
+	spi_write(data_byte);                   //! 3) Write the data
+	SET_LTC2874_CS();                //! 4) Pull CS high to finish transaction
 
 }
 
@@ -715,51 +658,50 @@ void LTC2874_write_bit_value_update_all(uint8_t LTC2874_register, uint8_t LTC287
 //  parameters: register, bit
 //  returns: nothing
 //************************************************************************************
-void LTC2874_write_bit_set_update_all(uint8_t LTC2874_register, uint8_t LTC2874_bit)
-{
-  uint8_t command_byte, data_byte;
-  command_byte = LTC2874_READ | (LTC2874_register << 1);
+void LTC2874_write_bit_set_update_all(uint8_t LTC2874_register,
+		uint8_t LTC2874_bit) {
+	uint8_t command_byte, data_byte;
+	command_byte = LTC2874_READ | (LTC2874_register << 1);
 
-  RESET_LTC2874_CS();                 //! 1) Pull CS low
-  spi_write(command_byte);                //! 2) Write first byte and send command | address
-  data_byte = spi_read(0x00);             //! 3) Read last byte (while sending null data)
-  SET_LTC2874_CS();                //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();                 //! 1) Pull CS low
+	spi_write(command_byte);  //! 2) Write first byte and send command | address
+	data_byte = spi_read(0x00);  //! 3) Read last byte (while sending null data)
+	SET_LTC2874_CS();                //! 4) Pull CS high to finish transaction
 
-  data_byte |= LTC2874_bit;               // compound bitwise OR
+	data_byte |= LTC2874_bit;               // compound bitwise OR
 
-  command_byte = LTC2874_WRITE_UPDATE_ALL | (LTC2874_register << 1);
+	command_byte = LTC2874_WRITE_UPDATE_ALL | (LTC2874_register << 1);
 
-  RESET_LTC2874_CS();                 //! 1) Pull CS low to start transaction
-  spi_write(command_byte);                //! 2) Write the command and address
-  spi_write(data_byte);                   //! 3) Write the data
-  SET_LTC2874_CS();                //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();                 //! 1) Pull CS low to start transaction
+	spi_write(command_byte);                //! 2) Write the command and address
+	spi_write(data_byte);                   //! 3) Write the data
+	SET_LTC2874_CS();                //! 4) Pull CS high to finish transaction
 }
-
 
 //************************************************************************************
 //  Clears a register bit, then Updates.
 //  parameters: register, bit
 //  returns: nothing
 //************************************************************************************
-void LTC2874_write_bit_clr_update_all(uint8_t LTC2874_register, uint8_t LTC2874_bit)
-{
-  uint8_t command_byte , mask, data_byte;
-  command_byte = LTC2874_READ | (LTC2874_register << 1);
+void LTC2874_write_bit_clr_update_all(uint8_t LTC2874_register,
+		uint8_t LTC2874_bit) {
+	uint8_t command_byte, mask, data_byte;
+	command_byte = LTC2874_READ | (LTC2874_register << 1);
 
-  RESET_LTC2874_CS();            //! 1) Pull CS low
-  spi_write(command_byte);           //! 2) Write first byte and send command | address
-  data_byte = spi_read(0x00);        //! 3) Read last byte (while sending null data)
-  SET_LTC2874_CS();           //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();            //! 1) Pull CS low
+	spi_write(command_byte);  //! 2) Write first byte and send command | address
+	data_byte = spi_read(0x00);  //! 3) Read last byte (while sending null data)
+	SET_LTC2874_CS();           //! 4) Pull CS high to finish transaction
 
-  mask = ~LTC2874_bit;               // bitwise NOT
-  data_byte &= mask;                 // clears the bit, leaves the rest unchanged
+	mask = ~LTC2874_bit;               // bitwise NOT
+	data_byte &= mask;              // clears the bit, leaves the rest unchanged
 
-  command_byte = LTC2874_WRITE_UPDATE_ALL | (LTC2874_register << 1);
+	command_byte = LTC2874_WRITE_UPDATE_ALL | (LTC2874_register << 1);
 
-  RESET_LTC2874_CS();            //! 1) Pull CS low to start transaction
-  spi_write(command_byte);           //! 2) Write the command and address
-  spi_write(data_byte);              //! 3) Write the data
-  SET_LTC2874_CS();           //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();            //! 1) Pull CS low to start transaction
+	spi_write(command_byte);           //! 2) Write the command and address
+	spi_write(data_byte);              //! 3) Write the data
+	SET_LTC2874_CS();           //! 4) Pull CS high to finish transaction
 }
 
 //************************************************************************************
@@ -767,15 +709,14 @@ void LTC2874_write_bit_clr_update_all(uint8_t LTC2874_register, uint8_t LTC2874_
 //  parameter: none
 //  returns: nothing
 //************************************************************************************
-void LTC2874_reset(void)
-{
-  uint8_t command_byte;
-  command_byte = LTC2874_RESET;
+void LTC2874_reset(void) {
+	uint8_t command_byte;
+	command_byte = LTC2874_RESET;
 
-  RESET_LTC2874_CS();             //! 1) Pull CS low to start transaction
-  spi_write(command_byte);            //! 2) Write the command and address
-  spi_write(0x00);                    //! 3) Write null data
-  SET_LTC2874_CS();            //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();             //! 1) Pull CS low to start transaction
+	spi_write(command_byte);            //! 2) Write the command and address
+	spi_write(0x00);                    //! 3) Write null data
+	SET_LTC2874_CS();            //! 4) Pull CS high to finish transaction
 }
 
 //************************************************************************************
@@ -783,84 +724,77 @@ void LTC2874_reset(void)
 //  parameter: register address
 //  returns: data byte
 //************************************************************************************
-uint8_t LTC2874_read_reg(uint8_t LTC2874_register)
-{
-  uint8_t command_byte, data_byte;
-  //!  Build the reg command byte
-  command_byte = LTC2874_READ |  (LTC2874_register << 1);
+uint8_t LTC2874_read_reg(uint8_t LTC2874_register) {
+	uint8_t command_byte, data_byte;
+	//!  Build the reg command byte
+	command_byte = LTC2874_READ | (LTC2874_register << 1);
 
-  RESET_LTC2874_CS();                //! 1) Pull CS low
-  spi_write(command_byte);               //! 2) Write first byte and send command | address
-  data_byte = spi_read(0x00);            //! 3) Read last byte (while sending null data)
-  SET_LTC2874_CS();               //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();                //! 1) Pull CS low
+	spi_write(command_byte);  //! 2) Write first byte and send command | address
+	data_byte = spi_read(0x00);  //! 3) Read last byte (while sending null data)
+	SET_LTC2874_CS();               //! 4) Pull CS high to finish transaction
 
-  return data_byte;
+	return data_byte;
 }
-
 
 //************************************************************************************
 //  Reads a data BIT from specified register.
 //  parameters: register address, bit mask
 //  returns: bit value.
 //************************************************************************************
-uint8_t LTC2874_read_bit(uint8_t LTC2874_register, uint8_t LTC2874_bit)
-{
-  uint8_t command_byte, data_byte;
+uint8_t LTC2874_read_bit(uint8_t LTC2874_register, uint8_t LTC2874_bit) {
+	uint8_t command_byte, data_byte;
 
-  command_byte = LTC2874_READ |  (LTC2874_register << 1);
+	command_byte = LTC2874_READ | (LTC2874_register << 1);
 
-  RESET_LTC2874_CS();                 //! 1) Pull CS low
-  spi_write(command_byte);                //! 2) Write first byte and send command | address
-  data_byte = spi_read(0x00);             //! 3) Read last byte (while sending null data)
-  SET_LTC2874_CS();                //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();                 //! 1) Pull CS low
+	spi_write(command_byte);  //! 2) Write first byte and send command | address
+	data_byte = spi_read(0x00);  //! 3) Read last byte (while sending null data)
+	SET_LTC2874_CS();                //! 4) Pull CS high to finish transaction
 
-  data_byte &= LTC2874_bit;
-  data_byte = data_byte != 0;             //! 5) If the bit is not zero set data_byte to 1
+	data_byte &= LTC2874_bit;
+	data_byte = data_byte != 0; //! 5) If the bit is not zero set data_byte to 1
 
-  return data_byte;
+	return data_byte;
 }
-
 
 //************************************************************************************
 //  Writes byte of data to a register without Updating.
 //  parameters: register, data
 //  returns: nothing
 //************************************************************************************
-void LTC2874_write_register(uint8_t LTC2874_register, uint8_t LTC2874_data)
-{
-  uint8_t command_byte;
-  command_byte = LTC2874_WRITE_NO_UPDATE |  (LTC2874_register << 1);
+void LTC2874_write_register(uint8_t LTC2874_register, uint8_t LTC2874_data) {
+	uint8_t command_byte;
+	command_byte = LTC2874_WRITE_NO_UPDATE | (LTC2874_register << 1);
 
-  RESET_LTC2874_CS();               //! 1) Pull CS low to start transaction
-  spi_write(command_byte);              //! 2) Write the command and address
-  spi_write(LTC2874_data);              //! 3) Write the data
-  SET_LTC2874_CS();              //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();               //! 1) Pull CS low to start transaction
+	spi_write(command_byte);              //! 2) Write the command and address
+	spi_write(LTC2874_data);              //! 3) Write the data
+	SET_LTC2874_CS();              //! 4) Pull CS high to finish transaction
 }
-
 
 //************************************************************************************
 //  Sets a register bit without Updating.
 //  parameters: register, bit
 //  returns: nothing
 //************************************************************************************
-void LTC2874_write_bit_set(uint8_t LTC2874_register, uint8_t LTC2874_bit)
-{
-  uint8_t command_byte , data_byte;
-  command_byte = LTC2874_READ | (LTC2874_register << 1);
+void LTC2874_write_bit_set(uint8_t LTC2874_register, uint8_t LTC2874_bit) {
+	uint8_t command_byte, data_byte;
+	command_byte = LTC2874_READ | (LTC2874_register << 1);
 
-  RESET_LTC2874_CS();               //! 1) Pull CS low
-  spi_write(command_byte);            //! 2) Write first byte and send command | address
-  data_byte = spi_read(0x00);           //! 3) Read last byte (while sending null data)
-  SET_LTC2874_CS();              //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();               //! 1) Pull CS low
+	spi_write(command_byte);  //! 2) Write first byte and send command | address
+	data_byte = spi_read(0x00);  //! 3) Read last byte (while sending null data)
+	SET_LTC2874_CS();              //! 4) Pull CS high to finish transaction
 
-  data_byte |= LTC2874_bit;             // compound bitwise OR
+	data_byte |= LTC2874_bit;             // compound bitwise OR
 
-  command_byte = LTC2874_WRITE_NO_UPDATE |  (LTC2874_register << 1);
+	command_byte = LTC2874_WRITE_NO_UPDATE | (LTC2874_register << 1);
 
-  RESET_LTC2874_CS();                //! 1) Pull CS low to start transaction
-  spi_write(command_byte);               //! 2) Write the command and address
-  spi_write(data_byte);                  //! 3) Write the data
-  SET_LTC2874_CS();               //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();                //! 1) Pull CS low to start transaction
+	spi_write(command_byte);               //! 2) Write the command and address
+	spi_write(data_byte);                  //! 3) Write the data
+	SET_LTC2874_CS();               //! 4) Pull CS high to finish transaction
 }
 
 //************************************************************************************
@@ -868,25 +802,23 @@ void LTC2874_write_bit_set(uint8_t LTC2874_register, uint8_t LTC2874_bit)
 //  parameters: register, bit
 //  returns: nothing.
 //************************************************************************************
-void LTC2874_write_bit_clr(uint8_t LTC2874_register, uint8_t LTC2874_bit)
-{
-  uint8_t command_byte , mask, data_byte;
-  command_byte = LTC2874_READ |  (LTC2874_register << 1);
+void LTC2874_write_bit_clr(uint8_t LTC2874_register, uint8_t LTC2874_bit) {
+	uint8_t command_byte, mask, data_byte;
+	command_byte = LTC2874_READ | (LTC2874_register << 1);
 
-  spi_write(command_byte);              //! 2) Write first byte and send command | address
-  SET_LTC2874_CS();              //! 4) Pull CS high to finish transaction
+	spi_write(command_byte);  //! 2) Write first byte and send command | address
+	SET_LTC2874_CS();              //! 4) Pull CS high to finish transaction
 
-  mask = ~LTC2874_bit;                  // bitwise NOT
-  data_byte &= mask;                    // clears the bit, leaves the rest unchanged
+	mask = ~LTC2874_bit;                  // bitwise NOT
+	data_byte &= mask;              // clears the bit, leaves the rest unchanged
 
-  command_byte = LTC2874_WRITE_NO_UPDATE |  (LTC2874_register << 1);
+	command_byte = LTC2874_WRITE_NO_UPDATE | (LTC2874_register << 1);
 
-  RESET_LTC2874_CS();               //! 1) Pull CS low to start transaction
-  spi_write(command_byte);              //! 2) Write the command and address
-  spi_write(data_byte);                 //! 3) Write the data
-  SET_LTC2874_CS();              //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();               //! 1) Pull CS low to start transaction
+	spi_write(command_byte);              //! 2) Write the command and address
+	spi_write(data_byte);                 //! 3) Write the data
+	SET_LTC2874_CS();              //! 4) Pull CS high to finish transaction
 }
-
 
 //************************************************************************************
 //  Changes value of a register bit without Updating.
@@ -896,29 +828,26 @@ void LTC2874_write_bit_clr(uint8_t LTC2874_register, uint8_t LTC2874_bit)
 //    value: 0 or 1
 //  returns: nothing
 //************************************************************************************
-void LTC2874_write_bit_value(uint8_t LTC2874_register, uint8_t LTC2874_bit, uint8_t value)
-{
-  uint8_t command_byte , data_byte;
-  command_byte = LTC2874_READ |  (LTC2874_register << 1);
+void LTC2874_write_bit_value(uint8_t LTC2874_register, uint8_t LTC2874_bit,
+		uint8_t value) {
+	uint8_t command_byte, data_byte;
+	command_byte = LTC2874_READ | (LTC2874_register << 1);
 
-  RESET_LTC2874_CS();                   //! 1) Pull CS low
-  spi_write(command_byte);                  //! 2) Write first byte and send command | address
-  data_byte = spi_read(0x00);               //! 3) Read last byte (while sending null data)
-  SET_LTC2874_CS();                  //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();                   //! 1) Pull CS low
+	spi_write(command_byte);  //! 2) Write first byte and send command | address
+	data_byte = spi_read(0x00);  //! 3) Read last byte (while sending null data)
+	SET_LTC2874_CS();                  //! 4) Pull CS high to finish transaction
 
-  if (value)
-  {
-    data_byte |= LTC2874_bit;
-  }
-  else
-  {
-    data_byte &= ~LTC2874_bit;
-  }
+	if (value) {
+		data_byte |= LTC2874_bit;
+	} else {
+		data_byte &= ~LTC2874_bit;
+	}
 
-  command_byte = LTC2874_WRITE_NO_UPDATE |  (LTC2874_register << 1);
+	command_byte = LTC2874_WRITE_NO_UPDATE | (LTC2874_register << 1);
 
-  RESET_LTC2874_CS();                     //! 1) Pull CS low to start transaction
-  spi_write(command_byte);                    //! 2) Write the command and address
-  spi_write(data_byte);                       //! 3) Write the data
-  SET_LTC2874_CS();                    //! 4) Pull CS high to finish transaction
+	RESET_LTC2874_CS();                  //! 1) Pull CS low to start transaction
+	spi_write(command_byte);                //! 2) Write the command and address
+	spi_write(data_byte);                       //! 3) Write the data
+	SET_LTC2874_CS();                  //! 4) Pull CS high to finish transaction
 }
